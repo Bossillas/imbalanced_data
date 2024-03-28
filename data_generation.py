@@ -29,7 +29,8 @@ def data_generation(
 
 def fix_imbalance(
     df: pd.DataFrame,
-    strategy: str = "nothing"
+    strategy: str = "nothing",
+    random_state: int = 7
 ) -> pd.DataFrame:
     
     if strategy == "nothing":
@@ -37,6 +38,17 @@ def fix_imbalance(
     elif strategy == "upsample":
         pass
     elif strategy == "downsample":
-        pass
+        df0 = df[df["target"] == 0]
+        df1 = df[df["target"] == 1]
+        if df0.shape[0] > df1.shape[0]:
+            df0.sample(n=df1.shape[0], random_state=random_state)
+        elif df0.shape[0] < df1.shape[0]:
+            df1.sample(n=df0.shape[0], random_state=random_state)
+        else:
+            return df
+        df = pd.concat([df0, df1])\
+            .sample(frac=1, random_state=random_state)\
+            .reset_index(drop=True)    
+        return df
     else:
         raise ValueError(f"strategy argument must be one of the following: 'nothing', 'upsample', or 'downsample' but recieved '{strategy}'")
