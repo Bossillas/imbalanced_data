@@ -14,7 +14,7 @@ def data_generation(
         raise ValueError("ratio but be between 0 and 1")
     
     # generate binary classification data
-    X, y = make_classification(weights=ratio,
+    X, y = make_classification(weights=[1-ratio, ratio],
                                n_samples=n_samples,
                                n_features=n_features,
                                n_informative=n_informative,
@@ -26,3 +26,17 @@ def data_generation(
     df["target"] = y
     
     return df
+
+def fix_imbalance(
+    df: pd.DataFrame,
+    strategy: str = "nothing"
+) -> pd.DataFrame:
+    
+    if strategy == "nothing":
+        return df
+    elif strategy == "upsample":
+        pass
+    elif strategy == "downsample":
+        pass
+    else:
+        raise ValueError(f"strategy argument must be one of the following: 'nothing', 'upsample', or 'downsample' but recieved '{strategy}'")
