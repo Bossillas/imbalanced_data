@@ -36,7 +36,18 @@ def fix_imbalance(
     if strategy == "nothing":
         return df
     elif strategy == "upsample":
-        pass
+        df0 = df[df["target"] == 0]
+        df1 = df[df["target"] == 1]
+        if df0.shape[0] > df1.shape[0]:
+            df1.sample(n=df0.shape[0], random_state=random_state)
+        elif df0.shape[0] < df1.shape[0]:
+            df0.sample(n=df1.shape[0], random_state=random_state)
+        else:
+            return df
+        df = pd.concat([df0, df1])\
+            .sample(frac=1, random_state=random_state)\
+            .reset_index(drop=True)    
+        return df
     elif strategy == "downsample":
         df0 = df[df["target"] == 0]
         df1 = df[df["target"] == 1]
