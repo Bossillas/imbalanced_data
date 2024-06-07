@@ -1,6 +1,7 @@
 import yaml
 from sklearn.model_selection import train_test_spli
 import data_generation as dg
+import model as m
 
 # read config
 with open("config.yaml", "r") as f:
@@ -19,6 +20,16 @@ def pipeline(cfg: dict):
     df = dg.fix_imbalance(df, 
                           cfg["data"]["fix_imbalance_strategy"],
                           cfg["data"]["random_state"])
+    
+    # fit the models
+    lr = m.fit_model(df.drop(columns=["target"]),
+                     df["target"],
+                     cfg["model"]["logistic"],
+                     model="logistic")
+    xgb = m.fit_model(df.drop(columns=["target"]),
+                      df["target"],
+                      cfg["model"]["xgboost"],
+                      model="xgboost")
 
 
 if __name__ == "__main__":
